@@ -4,6 +4,7 @@
  */
 ;(function () {
     var _ = require('lodash');
+    var provider = require('./provider');
 
     /**
      * Regular Expression to strip comments - taken from AngularJS source injector.js
