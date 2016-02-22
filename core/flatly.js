@@ -2,6 +2,7 @@
  * @fileOverview
  * @author Liam Whan
  * @memberOf core
+ *
  */
 ;
 (function () {
@@ -12,8 +13,9 @@
     const _ = require('lodash');
 
     /**
-     * @namespace flatly
-     * @classdesc Main flatly class used to load db and query data
+     * flatly class contains the entire flatly api
+     * @func flatly
+     * @classdesc flatly is a simple flat file JSON db system.
      * @class
      * @constructor
      * @returns {flatly}
@@ -107,10 +109,12 @@
         };
 
         /**
-         * Returns the schema of the current DB
+         * Returns the schema of the currently selected DB
          *
          * @function flatly#getSchema
-         * @returns {Array}
+         * @example console.log(flatly.getSchema());
+         *  // -> ['table1', 'table2', 'table3']
+         * @returns {string[]}
          */
         this.getSchema = () => _.keys(_tables);
 
@@ -154,7 +158,7 @@
             let result = _.find(tblTarget, search);
 
 
-            return (result) ? [result] : null;
+            return result || null;
         };
 
 
@@ -194,8 +198,8 @@
          */
         this.use = function (options) {
             this.name = options.name.toLowerCase();
-            _baseDir = options.src;
-            _files = io.getAll({src: options.src});
+            _baseDir = path.resolve(global.parent, options.src);
+            _files = io.getAll({src: _baseDir});
 
             /* Add table and row metadata */
             _tables = _.forIn(io.parse(options.name, _files), (tbl, tblName) => {
@@ -217,7 +221,7 @@
 
 
         /**
-         * Save table data to disk
+         * Save table data to disk. Remove flatly metadata before saving.
          *
          * @func flatly#save
          * @param options {Object}
@@ -287,7 +291,7 @@
 
 
 
-            var old = this.findOne({from: tblName, where: where})[0];
+            var old = this.findOne({from: tblName, where: where});
 
             if(old) {
 
@@ -299,7 +303,7 @@
 
 
                 } else {
-                    console.warn("No row found");
+                    console.warn("Could not find the specified Row in table " + tblName);
 
                 }
 

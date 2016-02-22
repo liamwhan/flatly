@@ -104,7 +104,6 @@
                 let dir = path.dirname(destination);
                 let file = path.basename(destination, path.extname(destination)) + ts + '.json';
                 destination = path.join(dir, file);
-                console.log(destination);
             }
 
             var stringified = JSON.stringify(data, null, 2);

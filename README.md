@@ -1,12 +1,13 @@
 <a name="flatly"></a>
 ## flatly
-Main flatly class used to load db and query data
+flatly is a simple flat file JSON db system.
 
 **Kind**: global class  
 
 * [flatly](#flatly)
+    * [new flatly()](#new_flatly_new)
     * [.dbInfo()](#flatly+dbInfo) ⇒ <code>Object</code>
-    * [.getSchema()](#flatly+getSchema) ⇒ <code>Array</code>
+    * [.getSchema()](#flatly+getSchema) ⇒ <code>Array.&lt;string&gt;</code>
     * [.tables()](#flatly+tables) ⇒ <code>Array</code>
     * [.getTable(tblName)](#flatly+getTable) ⇒ <code>Object</code>
     * [.findOne(criteria)](#flatly+findOne) ⇒ <code>Array</code>
@@ -15,6 +16,10 @@ Main flatly class used to load db and query data
     * [.save(options, [callback])](#flatly+save) ⇒ <code>[flatly](#flatly)</code>
     * [.update(rowData, matchBy, tblName)](#flatly+update) ⇒ <code>[flatly](#flatly)</code>
 
+<a name="new_flatly_new"></a>
+### new flatly()
+flatly class contains the entire flatly api
+
 <a name="flatly+dbInfo"></a>
 ### flatly.dbInfo() ⇒ <code>Object</code>
 Returns currently selected database name and table names
@@ -22,10 +27,14 @@ Returns currently selected database name and table names
 **Kind**: instance method of <code>[flatly](#flatly)</code>  
 **Returns**: <code>Object</code> - An object with the database name, table names and table count  
 <a name="flatly+getSchema"></a>
-### flatly.getSchema() ⇒ <code>Array</code>
-Returns the schema of the current DB
+### flatly.getSchema() ⇒ <code>Array.&lt;string&gt;</code>
+Returns the schema of the currently selected DB
 
 **Kind**: instance method of <code>[flatly](#flatly)</code>  
+**Example**  
+```js
+console.log(flatly.getSchema()); // -> ['table1', 'table2', 'table3']
+```
 <a name="flatly+tables"></a>
 ### flatly.tables() ⇒ <code>Array</code>
 Returns a deep clone of the tables array
