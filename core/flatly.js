@@ -255,7 +255,18 @@
 
         };
 
-
+        /**
+         * Update an existing table row
+         * @func flatly#update
+         * @param rowData {Object} An object representing a row of the target table
+         * @param matchBy {String} The key to use to match rowData to an existing row in the table
+         * @param tblName {String} The target table name
+         * @example flatly.update({
+         *      id: 6,
+         *      name: Michael Flatly
+         *  }, 'id', 'customers');
+         * @returns {flatly}
+         */
         this.update = (rowData, matchBy, tblName) => {
             if (_.has(rowData, '$$flatly')) {
                 tblName = rowData.$$flatly.table;
@@ -307,6 +318,8 @@
                 return obj['$$flatly'];
             }
         };
+
+
 
     }//end flatly()
 
