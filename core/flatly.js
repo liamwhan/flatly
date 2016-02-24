@@ -12,6 +12,9 @@
     const path = require('path');
     const _ = require('lodash');
 
+
+
+
     /**
      * flatly class contains the entire flatly api
      * @func flatly
@@ -21,7 +24,11 @@
      * @returns {flatly}
      */
     function flatly() {
+        if (new.target === undefined) {
+            throw "You must instantiate flatly. e.g. const Flatly = require('flatly');\r\nvar flatly = new Flatly();"
+        }
 
+        //region Private members
         /**
          * @member _tables Tables collection
          * @type {Object}
@@ -40,6 +47,22 @@
              * @private
              */
             _baseDir = "";
+
+        /**
+         * Get the flatly metadata
+         * @param obj
+         * @returns {Object|boolean}
+         * @private
+         */
+        let _getMeta = (obj) => {
+            if (!_.has(obj, '$$flatly')) {
+                return false;
+            } else {
+                return obj['$$flatly'];
+            }
+        };
+
+
 
         /**
          * Removes flatly metadata before saving to disk
@@ -64,16 +87,18 @@
         };
 
 
-        if (new.target === undefined) {
-            throw "You must instantiate flatly. e.g. const Flatly = require('flatly');\r\nvar flatly = new Flatly();"
-        }
+
 
 
         /**
          * @function flatly~_parseCriteria
          * @desc Helper method to parse the search criteria object
          * @private
-         * @param criteria
+         * @param criteria {Object} The criteria object to parse
+         * @param criteria.from {String} Table name
+         * @param criteria.where {Object} An object defining the search criteria
+         * @param criteria.where.column {String} the Column name to search
+         * @param criteria.where.equals {String} the search term.
          * @returns {Object} The search result object is of form {"columnName": searchTerm} which is used by the find methods
          */
         function _parseCriteria(criteria) {
@@ -83,11 +108,13 @@
                 throw new Error('You must include both "where" and "from" criteria to use findOne()');
             }
             let search = {};
-            search[criteria.where.column] = criteria.where.equals;
+            search[criteria.where.column.toLowerCase()] = criteria.where.equals;
 
             return search;
         }
+//endregion
 
+        // region Public
         /**
          * The name of the database currently in use
          * @member {String}
@@ -107,6 +134,8 @@
                 count: this.getSchema().length
             }
         };
+
+
 
         /**
          * Returns the schema of the currently selected DB
@@ -154,7 +183,7 @@
         this.findOne = (criteria) => {
             let tblName = criteria.from;
             let search = _parseCriteria(criteria);
-            let tblTarget = this.getTable(tblName);
+            let tblTarget = this.getTable(tblName.toLowerCase());
             let result = _.find(tblTarget, search);
 
 
@@ -202,23 +231,48 @@
             _files = io.getAll({src: _baseDir});
 
             /* Add table and row metadata */
-            _tables = _.forIn(io.parse(options.name, _files), (tbl, tblName) => {
-                _.forIn(tbl, (row) => {
-                    row['$$flatly'] = {
-                        table: tblName
-                    }
-                });
+            let tablesClean = io.parse(options.name, _files);
 
-                tbl["$$flatly"] = {
-                    table: tblName
-                };
+            _tables = _addMeta(tablesClean);
 
-            });
 
 
             return this;
         };
 
+        /**
+         * Adds flatly metadata to db object
+         * @param data {Object|Array} the data to tag
+         * @param [tblName] {String} a string identifier for what
+         * @returns {*}
+         * @private
+         */
+        let _addMeta = (data, tblName) => {
+            let clone = _.cloneDeep(data);
+            let meta = {
+                $$flatly: {
+                    table: tblName
+                }
+            };
+
+            if(!_.has(clone, '$$flatly')) {
+                _.forIn(clone, (tbl, tblName) => {
+                    _.forIn(tbl, (row) => {
+
+                        _.assign(row, meta);
+
+                    });
+
+                    _.assign(tbl, meta);
+
+                });
+            } else {
+                _.assign(clone, meta);
+            }
+
+
+            return clone;
+        };
 
         /**
          * Save table data to disk. Remove flatly metadata before saving.
@@ -236,6 +290,8 @@
                 throw new Error('You must pass a "table" parameter to use save()');
             }
 
+            _.defaults(options, {overwrite: false}, {async: false});
+
             let target = _removeMeta(this.getTable(options.table));
             let filename = options.table;
             let tblFile = path.normalize(path.format({
@@ -246,16 +302,66 @@
             }));
 
             if (_.has(options, 'async') && options.async) {
-                    if (!_.isSet(callback)) {
-                        throw "save() is set to async and no callback was supplied.";
+                    if (_.isUndefined(callback)) {
+                        throw Error("save() is set to async and no callback was supplied.");
                     } else {
-                        io.putSync(target, tblFile, callback);
+                        io.put(target, tblFile, callback, options.overwrite);
                         return this;
                     }
             } else {
-                io.putSync(target, tblFile);
+                io.put(target, tblFile, options.overwrite);
                 return this;
             }
+
+        };
+
+
+        /**
+         * Returns the a new Id for a table
+         * @func flatly~nextId
+         * @param tblName {Object} The table to query
+         * @private
+         * @returns {number}
+         */
+        let _nextId = (table) => {
+
+            let maxId = _.max(_.map(table, 'id'));
+
+
+            return maxId + 1;
+
+        };
+
+
+        this.checkExists = (tblName, column, value) => {
+
+            var bool = this.findOne({from: tblName, where: {column: column, equals: value}});
+            if(_.isNull(bool)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        this.insert = (row, tblName) => {
+            let table = this.getTable(tblName);
+
+
+
+            if(!_.isNull(table)) {
+                let newId = table.length === 0 ? 1 : _nextId(table);
+
+                row.id = newId;
+
+                row = _addMeta(row, 'manifest');
+
+                _tables[tblName].push(row);
+
+                return this;
+            } else {
+                throw Error('Table not found: ', tblName);
+            }
+
 
         };
 
@@ -275,7 +381,7 @@
             if (_.has(rowData, '$$flatly')) {
                 tblName = rowData.$$flatly.table;
             } else {
-                if (!_.isSet(tblName)) {
+                if (_.isUndefined(tblName)) {
                     throw new Error("You must pass a flatly object or the name of the table to insert the data into");
                 }
             }
@@ -315,13 +421,7 @@
 
         };
 
-        let _getMeta = (obj) => {
-            if (!_.has(obj, '$$flatly')) {
-                return false;
-            } else {
-                return obj['$$flatly'];
-            }
-        };
+        //endregion
 
 
 

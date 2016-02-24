@@ -86,7 +86,7 @@
          * @param destination
          * @param cb
          */
-        this.put = (data, destination, cb) => {
+        this.put = (data, destination, cb, overwrite) => {
             var stringified = JSON.stringify(data, null, 2);
 
             fs.writeFile(destination, stringified, null, cb);
@@ -96,19 +96,42 @@
          * Write data to file synchronously
          * @param {Object} data
          * @param {string} destination
+         * @param {boolean} overwrite
+         * @param {function} callback
          * @param {boolean} [overwrite=false] Overwrite the existing table file?
          */
-        this.putSync = (data, destination, overwrite) => {
-            if(!overwrite) {
-                let ts = "-" + new Date().getTime().toString();
-                let dir = path.dirname(destination);
+        this.putSync = (data, destination, overwrite, callback) => {
+            let ts = "-" + new Date().getTime().toString();
+            let dir = path.dirname(destination);
+            var stringified = JSON.stringify(data, null, 2);
+
+            if(overwrite) {
+                let back = path.join(dir, path.basename(destination, path.extname(destination)) + ts + '.bak');
+
+                this.backup(destination, back);
+            } else
+            {
+
                 let file = path.basename(destination, path.extname(destination)) + ts + '.json';
                 destination = path.join(dir, file);
             }
 
-            var stringified = JSON.stringify(data, null, 2);
+            if(!_.isUndefined(callback)) {
+                fs.writeFile(destination, stringified, callback);
+            } else {
+                fs.writeFileSync(destination, stringified);
+            }
 
-            fs.writeFileSync(destination, stringified);
+
+        }
+        /**
+         * Create a backup of a file
+         * @param source
+         * @param destination
+         */
+        this.backup = (source, destination) => {
+
+            fs.createReadStream(source).pipe(fs.createWriteStream(destination));
         }
 
     }

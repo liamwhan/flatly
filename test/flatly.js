@@ -3,11 +3,12 @@ var chaiParam = require('chai-param');
 var expect = chai.expect;
 var param = chaiParam.param;
 
+
 chaiParam.config.improveMessages = true;
 
 chai.use(chaiParam);
 
-var Flatly = require('../core/flatly');
+var Flatly = require('../index');
 var path = require('path');
 
 
@@ -16,15 +17,20 @@ describe('Flatly', function () {
 
     beforeEach(function () {
         flatly = new Flatly();
-        flatly.use({name: 'data', src: '../schema/'});
+        flatly.use({name: 'data', src: '../../schema/'});
 
     });
 
-    it('should have properties: use, tables, db', function () {
+    it('should be a flatly object', function () {
         expect(flatly).to.be.an.instanceof(Flatly);
+    });
+
+
+    it('should have properties: use, tables, db', function () {
+
         expect(flatly).to.have.property('use');
         expect(flatly).to.have.property('tables');
-        expect(flatly).to.have.property('db');
+        expect(flatly).to.have.property('dbInfo');
 
     });
 
@@ -73,7 +79,7 @@ describe('Flatly', function () {
     });
 
     describe('#findOne()', function () {
-        it('should return an array of exactly 1 item if the table exists', function () {
+        it('should return an object with $$flatly metadata if item exists', function () {
             var findResult = flatly.findOne({
                 from: 'Indicators',
                 where: {
@@ -82,12 +88,12 @@ describe('Flatly', function () {
                 }
             });
 
-            expect(findResult).to.be.an.array;
-            expect(findResult).have.length(1)
+            expect(findResult).to.be.an.object;
+            expect(findResult).have.property('$$flatly');
 
         });
 
-        it('should return undefined if that table does not exist', function () {
+        it('should return null if that table does not exist', function () {
 
             var findResult = flatly.findOne({
                 from: 'ndicators',
@@ -97,13 +103,13 @@ describe('Flatly', function () {
                 }
             });
 
-            expect(findResult).to.be.undefined;
+            expect(findResult).to.be.null;
         });
     });
 
-    describe('#findAll()', function() {
+    describe('#findAll()', function () {
 
-        it('should return an array if search is successful', function() {
+        it('should return an array if search is successful', function () {
             var findResults = flatly.findAll({
                 from: 'Indicators',
                 where: {
@@ -118,5 +124,69 @@ describe('Flatly', function () {
 
     });
 
+
+    //describe('~next()', function() {
+    //
+    //    it('should return an integer', function () {
+    //       expect(flatly.nextId('indicators')).to.be.a.number;
+    //       expect(flatly.nextId('indicators')).to.be.above(114);
+    //
+    //    });
+    //
+    //});
+
+
+});
+
+describe('Flatly - Users', function () {
+    "use strict";
+
+    let flatly = {};
+    beforeEach(function () {
+        flatly = new Flatly();
+        flatly.use({name: 'data', src: '../../users/'});
+
+    });
+
+
+    it('fixture: should load the user-manifest', function () {
+        expect(flatly.tables()).to.have.property('manifest');
+
+    });
+
+    describe('#insert()', function () {
+        let user = {
+            firstName: 'Liam',
+            lastName: 'Whan',
+            username: 'WHANL2',
+            access: 'admin'
+
+        };
+        it('should not throw an error if the table exists', function () {
+            expect(flatly.insert(user, 'manifest')).not.to.throwError;
+
+        });
+
+        it('should throw an error if the table does not exist', function () {
+            expect(flatly.insert(user, 'manifest')).to.throwError;
+        });
+
+        it('should return the object we just added ', function () {
+            expect(flatly.insert(user, 'manifest')).not.to.throwError;
+            expect(flatly.findOne({
+                from: 'manifest',
+                where: {
+                    column: 'id',
+                    equals: 1
+                }
+            })).to.not.be.null;
+
+            flatly.save({table: 'manifest', overwrite: true});
+
+
+
+        });
+
+    })
 
 });
