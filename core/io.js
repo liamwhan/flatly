@@ -130,8 +130,9 @@
          * @param destination
          */
         this.backup = (source, destination) => {
-
-            fs.createReadStream(source).pipe(fs.createWriteStream(destination));
+            var oldData = fs.readFileSync(source);
+            fs.writeFileSync(destination, oldData);
+            //fs.createReadStream(source).pipe(fs.createWriteStream(destination));
         }
 
     }

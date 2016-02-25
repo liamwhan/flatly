@@ -3,3 +3,4 @@ docs/
 jsd.bat
 jsdoc.conf.json
 conf.json
+.idea/
