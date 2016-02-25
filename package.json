@@ -36,11 +36,6 @@
     "travis-cov": "^0.2.5",
     "underscore": "^1.8.3"
   },
-  "config": {
-    "travis-cov": {
-      "threshold": 70
-    }
-  },
   "dependencies": {
     "glob": "^7.0.0",
     "graceful-fs": "^4.1.3",
