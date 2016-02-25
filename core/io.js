@@ -105,7 +105,7 @@
             }
 
             if(!_.isUndefined(callback)) {
-                fs.writeFile(destination, stringified, callback);
+                fs.writeFile(destination, stringified,{}, callback);
             } else {
                 fs.writeFileSync(destination, stringified);
             }
