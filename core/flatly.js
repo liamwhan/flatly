@@ -19,6 +19,7 @@
      * flatly class contains the entire flatly api
      * @func flatly
      * @classdesc flatly is a simple flat file JSON db system.
+     * IMPORTANT: flatly is under active development and is not considered production ready
      * @class
      * @constructor
      * @returns {flatly}

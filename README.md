@@ -1,8 +1,6 @@
 <a name="flatly"></a>
 ## flatly
-flatly is a simple flat file JSON db system.
-
-### IMPORTANT: This package is under active development and is not considered fit for production
+flatly is a simple flat file JSON db system.IMPORTANT: flatly is under active development and is not considered production ready
 
 **Kind**: global class  
 
@@ -36,8 +34,7 @@ Returns the schema of the currently selected DB
 **Kind**: instance method of <code>[flatly](#flatly)</code>  
 **Example**  
 ```js
-console.log(flatly.getSchema());
- // -> ['table1', 'table2', 'table3']
+console.log(flatly.getSchema()); // -> ['table1', 'table2', 'table3']
 ```
 <a name="flatly+tables"></a>
 ### flatly.tables() ⇒ <code>Array</code>
@@ -141,8 +138,5 @@ Update an existing table row
 
 **Example**  
 ```js
-flatly.update({
-     id: 6,
-     name: Michael Flatly
- }, 'id', 'customers');
+flatly.update({     id: 6,     name: Michael Flatly }, 'id', 'customers');
 ```
