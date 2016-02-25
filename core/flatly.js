@@ -247,24 +247,23 @@
          * @returns {*}
          * @private
          */
-        let _addMeta = (data, tblName) => {
+        let _addMeta = (data) => {
             let clone = _.cloneDeep(data);
-            let meta = {
-                $$flatly: {
-                    table: tblName
-                }
-            };
+
 
             if(!_.has(clone, '$$flatly')) {
                 _.forIn(clone, (tbl, tblName) => {
+                    let meta = {
+                        $$flatly: {
+                            table: tblName
+                        }
+                    };
+
                     _.forIn(tbl, (row) => {
 
                         _.assign(row, meta);
 
                     });
-
-                    _.assign(tbl, meta);
-
                 });
             } else {
                 _.assign(clone, meta);
