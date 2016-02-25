@@ -49,8 +49,9 @@
             _baseDir = "";
 
         /**
-         * Get the flatly metadata
-         * @param obj
+         * Get the flatly metadata from an object
+         * @func flatly~getMeta
+         * @param obj The object to check
          * @returns {Object|boolean}
          * @private
          */
@@ -62,7 +63,21 @@
             }
         };
 
+        /**
+         * Returns the a new Id for a table
+         * @func flatly~nextId
+         * @param tblName {Object} The table to query
+         * @private
+         * @returns {number}
+         */
+        let _nextId = (table) => {
 
+            let maxId = _.max(_.map(table, 'id'));
+
+
+            return maxId + 1;
+
+        };
 
         /**
          * Removes flatly metadata before saving to disk
@@ -87,7 +102,38 @@
         };
 
 
+        /**
+         * Adds flatly metadata to db object
+         * @param data {Object|Array} the data to tag
+         * @param [tblName] {String} a string identifier for what
+         * @returns {*}
+         * @private
+         */
+        let _addMeta = (data) => {
+            let clone = _.cloneDeep(data);
 
+
+            if (!_.has(clone, '$$flatly')) {
+                _.forIn(clone, (tbl, tblName) => {
+                    let meta = {
+                        $$flatly: {
+                            table: tblName
+                        }
+                    };
+
+                    _.forIn(tbl, (row) => {
+
+                        _.assign(row, meta);
+
+                    });
+                });
+            } else {
+                _.assign(clone, meta);
+            }
+
+
+            return clone;
+        };
 
 
         /**
@@ -104,7 +150,7 @@
         function _parseCriteria(criteria) {
 
             if (!_.has(criteria, 'from') || !_.has(criteria, 'where') || !_.has(criteria, 'where.column') || !_.has(criteria, 'where.equals')
-            ) {
+                ) {
                 throw new Error('You must include both "where" and "from" criteria to use findOne()');
             }
             let search = {};
@@ -112,7 +158,7 @@
 
             return search;
         }
-//endregion
+        //endregion
 
         // region Public
         /**
@@ -203,7 +249,7 @@
          */
         this.findAll = (criteria) => {
             if (!_.has(criteria, 'from') || !_.has(criteria, 'where') || !_.has(criteria, 'where.column') || !_.has(criteria, 'where.equals')
-            ) {
+                ) {
                 throw new Error('You must include both "where" and "from" criteria to use findAll()');
             }
 
@@ -228,7 +274,7 @@
         this.use = function (options) {
             this.name = options.name.toLowerCase();
             _baseDir = path.resolve(global.parent, options.src);
-            _files = io.getAll({src: _baseDir});
+            _files = io.getAll({ src: _baseDir });
 
             /* Add table and row metadata */
             let tablesClean = io.parse(options.name, _files);
@@ -240,38 +286,7 @@
             return this;
         };
 
-        /**
-         * Adds flatly metadata to db object
-         * @param data {Object|Array} the data to tag
-         * @param [tblName] {String} a string identifier for what
-         * @returns {*}
-         * @private
-         */
-        let _addMeta = (data) => {
-            let clone = _.cloneDeep(data);
-
-
-            if(!_.has(clone, '$$flatly')) {
-                _.forIn(clone, (tbl, tblName) => {
-                    let meta = {
-                        $$flatly: {
-                            table: tblName
-                        }
-                    };
-
-                    _.forIn(tbl, (row) => {
-
-                        _.assign(row, meta);
-
-                    });
-                });
-            } else {
-                _.assign(clone, meta);
-            }
-
-
-            return clone;
-        };
+        
 
         /**
          * Save table data to disk. Remove flatly metadata before saving.
@@ -289,7 +304,7 @@
                 throw new Error('You must pass a "table" parameter to use save()');
             }
 
-            _.defaults(options, {overwrite: false}, {async: false});
+            _.defaults(options, { overwrite: false }, { async: false });
 
             let target = _removeMeta(this.getTable(options.table));
             let filename = options.table;
@@ -301,12 +316,12 @@
             }));
 
             if (_.has(options, 'async') && options.async) {
-                    if (_.isUndefined(callback)) {
-                        throw Error("save() is set to async and no callback was supplied.");
-                    } else {
-                        io.put(target, tblFile, callback, options.overwrite);
-                        return this;
-                    }
+                if (_.isUndefined(callback)) {
+                    throw Error("save() is set to async and no callback was supplied.");
+                } else {
+                    io.put(target, tblFile, callback, options.overwrite);
+                    return this;
+                }
             } else {
                 io.put(target, tblFile, options.overwrite);
                 return this;
@@ -315,27 +330,21 @@
         };
 
 
+        
+
         /**
-         * Returns the a new Id for a table
-         * @func flatly~nextId
-         * @param tblName {Object} The table to query
-         * @private
-         * @returns {number}
+         * Check if a record (row) exists within a given table
+         * @param {string} tblName The name of the table to check
+         * @param {string} column The column to search
+         * @param {*} value The value to search for
+         * @func flatly#checkExists
+         * @example if(flatly.checkExists('table1', 'id', 1)) { //do something }
+         * @return {boolean} Returns {true} if the value is found {false} otherwise
          */
-        let _nextId = (table) => {
-
-            let maxId = _.max(_.map(table, 'id'));
-
-
-            return maxId + 1;
-
-        };
-
-
         this.checkExists = (tblName, column, value) => {
 
-            var bool = this.findOne({from: tblName, where: {column: column, equals: value}});
-            if(_.isNull(bool)) {
+            var bool = this.findOne({ from: tblName, where: { column: column, equals: value } });
+            if (_.isNull(bool)) {
                 return false;
             } else {
                 return true;
@@ -347,7 +356,7 @@
 
 
 
-            if(!_.isNull(table)) {
+            if (!_.isNull(table)) {
                 let newId = table.length === 0 ? 1 : _nextId(table);
 
                 row.id = newId;
@@ -385,7 +394,7 @@
                 }
             }
 
-            if(!_.has(rowData, matchBy)) {
+            if (!_.has(rowData, matchBy)) {
                 throw new Error("The key: " + matchBy + " does not exist.");
             }
 
@@ -396,13 +405,13 @@
 
 
 
-            var old = this.findOne({from: tblName, where: where});
+            var old = this.findOne({ from: tblName, where: where });
 
-            if(old) {
+            if (old) {
 
                 let index = _.findIndex(_tables[tblName], old);
 
-                if(index !== -1) {
+                if (index !== -1) {
 
                     _tables[tblName].splice(index, 1, rowData);
 
