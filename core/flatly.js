@@ -289,13 +289,9 @@
 
             var tbl = io.getOne(filePath);
 
-            var table = tbl[0];
-
-            table.$$flatly = {
-                table: tblName
-            };
-            _tables[tblName] = tbl;
-            return table;
+            var meta = _addMeta(tbl);
+            _tables[tblName] = meta;
+            return _tables[tblName];
 
         }
         
