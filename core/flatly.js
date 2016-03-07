@@ -282,11 +282,18 @@
 
             _tables = _addMeta(tablesClean);
 
-
-
             return this;
         };
 
+        this.refreshTable = function(tblName) {
+            var filename = tblName.toLowerCase() + ".json";
+            var filePath = path.join(_baseDir, filename);
+
+            var tbl = io.getOne(filePath);
+
+            console.log(tbl);
+
+        }
         
 
         /**

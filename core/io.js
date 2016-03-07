@@ -58,6 +58,10 @@
 
         };
 
+        this.getOne = function(filePath) {
+            return parse(fs.readFilesync(filePath));
+        };
+
         /**
          * @desc Parse JSON files into JS objects
          * @param dbName {String}
