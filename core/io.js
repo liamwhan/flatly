@@ -59,7 +59,7 @@
         };
 
         this.getOne = function(filePath) {
-            return parse(fs.readFilesync(filePath));
+            return parse(fs.readFileSync(filePath));
         };
 
         /**

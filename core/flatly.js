@@ -13,8 +13,6 @@
     const _ = require('lodash');
 
 
-
-
     /**
      * flatly class contains the entire flatly api
      * @func flatly
@@ -151,7 +149,7 @@
         function _parseCriteria(criteria) {
 
             if (!_.has(criteria, 'from') || !_.has(criteria, 'where') || !_.has(criteria, 'where.column') || !_.has(criteria, 'where.equals')
-                ) {
+            ) {
                 throw new Error('You must include both "where" and "from" criteria to use findOne()');
             }
             let search = {};
@@ -159,6 +157,7 @@
 
             return search;
         }
+
         //endregion
 
         // region Public
@@ -181,7 +180,6 @@
                 count: this.getSchema().length
             }
         };
-
 
 
         /**
@@ -250,7 +248,7 @@
          */
         this.findAll = (criteria) => {
             if (!_.has(criteria, 'from') || !_.has(criteria, 'where') || !_.has(criteria, 'where.column') || !_.has(criteria, 'where.equals')
-                ) {
+            ) {
                 throw new Error('You must include both "where" and "from" criteria to use findAll()');
             }
 
@@ -275,7 +273,7 @@
         this.use = function (options) {
             this.name = options.name.toLowerCase();
             _baseDir = path.resolve(global.parent, options.src);
-            _files = io.getAll({ src: _baseDir });
+            _files = io.getAll({src: _baseDir});
 
             /* Add table and row metadata */
             let tablesClean = io.parse(options.name, _files);
@@ -285,13 +283,19 @@
             return this;
         };
 
-        this.refreshTable = function(tblName) {
+        this.refreshTable = function (tblName) {
             var filename = tblName.toLowerCase() + ".json";
             var filePath = path.join(_baseDir, filename);
 
             var tbl = io.getOne(filePath);
 
-            console.log(tbl);
+            var table = tbl[0];
+
+            table.$$flatly = {
+                table: tblName
+            };
+            _tables[tblName] = table;
+            return table;
 
         }
         
@@ -312,7 +316,7 @@
                 throw new Error('You must pass a "table" parameter to use save()');
             }
 
-            _.defaults(options, { overwrite: false }, { async: false });
+            _.defaults(options, {overwrite: false}, {async: false});
 
             let target = _removeMeta(this.getTable(options.table));
             let filename = options.table;
@@ -338,8 +342,6 @@
         };
 
 
-        
-
         /**
          * Check if a record (row) exists within a given table
          * @param {string} tblName The name of the table to check
@@ -351,7 +353,7 @@
          */
         this.checkExists = (tblName, column, value) => {
 
-            var bool = this.findOne({ from: tblName, where: { column: column, equals: value } });
+            var bool = this.findOne({from: tblName, where: {column: column, equals: value}});
             if (_.isNull(bool)) {
                 return false;
             } else {
@@ -361,7 +363,6 @@
 
         this.insert = (row, tblName) => {
             let table = this.getTable(tblName);
-
 
 
             if (!_.isNull(table)) {
@@ -412,8 +413,7 @@
             };
 
 
-
-            var old = this.findOne({ from: tblName, where: where });
+            var old = this.findOne({from: tblName, where: where});
 
             if (old) {
 
@@ -438,7 +438,6 @@
         };
 
         //endregion
-
 
 
     }//end flatly()
