@@ -1,6 +1,6 @@
 {
   "name": "flatly",
-  "version": "0.1.0",
+  "version": "0.1.7",
   "description": "Lightweight JSON flat file database for small projects",
   "main": "index.js",
   "scripts": {
@@ -35,11 +35,6 @@
     "mocha": "^2.4.5",
     "travis-cov": "^0.2.5",
     "underscore": "^1.8.3"
-  },
-  "config": {
-    "travis-cov": {
-      "threshold": 70
-    }
   },
   "dependencies": {
     "glob": "^7.0.0",

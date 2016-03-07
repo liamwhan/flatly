@@ -80,20 +80,40 @@
             return results;
         };
 
-        /**
-         * Write data to file asynchronously
-         * @param data
-         * @param destination
-         * @param cb
+       /**
+         * Write data to file
+         * @param {Object} data
+         * @param {string} destination
+         * @param {boolean} overwrite
+         * @param {function} callback
+         * @param {boolean} [overwrite=false] Overwrite the existing table file?
          */
-        this.put = (data, destination, cb, overwrite) => {
+        this.put = (data, destination, overwrite, callback) => {
+           let ts = "-" + new Date().getTime().toString();
+            let dir = path.dirname(destination);
             var stringified = JSON.stringify(data, null, 2);
 
-            fs.writeFile(destination, stringified, null, cb);
+            if(overwrite) {
+                let back = path.join(dir, path.basename(destination, path.extname(destination)) + ts + '.bak');
+
+                this.backup(destination, back);
+            } else
+            {
+
+                let file = path.basename(destination, path.extname(destination)) + ts + '.json';
+                destination = path.join(dir, file);
+            }
+
+            if(!_.isUndefined(callback)) {
+                fs.writeFile(destination, stringified,{}, callback);
+            } else {
+                fs.writeFileSync(destination, stringified);
+            }
         };
 
         /**
          * Write data to file synchronously
+         * @deprecated Will be removed in version 0.1.6
          * @param {Object} data
          * @param {string} destination
          * @param {boolean} overwrite
@@ -101,6 +121,8 @@
          * @param {boolean} [overwrite=false] Overwrite the existing table file?
          */
         this.putSync = (data, destination, overwrite, callback) => {
+            _.defaults(overwrite, false);
+            
             let ts = "-" + new Date().getTime().toString();
             let dir = path.dirname(destination);
             var stringified = JSON.stringify(data, null, 2);
@@ -130,8 +152,10 @@
          * @param destination
          */
         this.backup = (source, destination) => {
-
-            fs.createReadStream(source).pipe(fs.createWriteStream(destination));
+            console.log('backing up to: ', destination);
+            var oldData = fs.readFileSync(source);
+            fs.writeFileSync(destination, oldData);
+            //fs.createReadStream(source).pipe(fs.createWriteStream(destination));
         }
 
     }

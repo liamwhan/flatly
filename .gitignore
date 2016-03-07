@@ -1,4 +1,5 @@
-node_modules/
-docs/
+jsd.bat
+jsdoc.conf.json
+conf.json
 .idea/
-
+node_modules/
