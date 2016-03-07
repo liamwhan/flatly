@@ -294,7 +294,7 @@
             table.$$flatly = {
                 table: tblName
             };
-            _tables[tblName] = table;
+            _tables[tblName] = tbl;
             return table;
 
         }
