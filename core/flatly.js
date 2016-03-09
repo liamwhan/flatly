@@ -283,6 +283,12 @@
             return this;
         };
 
+        /**
+         * Refresh table from disk
+         * @func flatly#refreshTable
+         * @param tblName {string} Table name to refresh
+         * @returns {object} Table
+         */
         this.refreshTable = function (tblName) {
             var filename = tblName.toLowerCase() + ".json";
             var filePath = path.join(_baseDir, filename);
@@ -293,7 +299,7 @@
             _tables[tblName] = meta;
             return _tables[tblName];
 
-        }
+        };
         
 
         /**
@@ -332,6 +338,7 @@
                 }
             } else {
                 io.put(target, tblFile, options.overwrite);
+                this.refreshTable(options.table);
                 return this;
             }
 
@@ -357,6 +364,13 @@
             }
         }
 
+        /**
+         * Insert a row into a table
+         * @func flatly#insert
+         * @param row {object} Row object to insert
+         * @param tblName {string} Name of the table to insert into
+         * @returns {flatly}
+         */
         this.insert = (row, tblName) => {
             let table = this.getTable(tblName);
 
