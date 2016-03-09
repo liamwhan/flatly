@@ -1,6 +1,6 @@
 {
   "name": "flatly",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "Lightweight JSON flat file database for small projects",
   "main": "index.js",
   "scripts": {
