@@ -17,6 +17,7 @@
      * flatly class contains the entire flatly api
      * @func flatly
      * @classdesc flatly is a simple flat file JSON db system.
+     *
      * IMPORTANT: flatly is under active development and is not considered production ready
      * @class
      * @constructor
@@ -150,7 +151,7 @@
                 throw new Error('You must include both "where" and "from" criteria to use findOne()');
             }
             let search = {};
-            search[criteria.where.column.toLowerCase()] = criteria.where.equals;
+            search[criteria.where.column] = criteria.where.equals;
 
             return search;
         }
@@ -225,9 +226,16 @@
         this.findOne = (criteria) => {
             let tblName = criteria.from;
             let search = _parseCriteria(criteria);
-            let tblTarget = this.getTable(tblName.toLowerCase());
-            let result = _.find(tblTarget, search);
 
+
+            let tblTarget = this.getTable(tblName.toLowerCase());
+
+            let result = _.find(tblTarget, search);
+            if(criteria.from == 'reviews') {
+                console.log(search);
+                console.log(tblTarget);
+                console.log(result);
+            }
 
             return result || null;
         };
