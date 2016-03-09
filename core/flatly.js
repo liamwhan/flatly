@@ -380,11 +380,10 @@
 
                 row.id = newId;
 
-                row = _addMeta(row, 'manifest');
 
                 _tables[tblName].push(row);
 
-                return this;
+                return row;
             } else {
                 throw Error('Table not found: ', tblName);
             }
