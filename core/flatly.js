@@ -226,6 +226,7 @@
             let tblName = criteria.from;
             let search = _parseCriteria(criteria);
             let tblTarget = this.getTable(tblName.toLowerCase());
+            console.log(tblTarget);
             let result = _.find(tblTarget, search);
 
 
