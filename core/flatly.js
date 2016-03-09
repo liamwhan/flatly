@@ -101,6 +101,7 @@
         };
 
 
+
         /**
          * Adds flatly metadata to db object
          * @param data {Object|Array} the data to tag
@@ -108,8 +109,8 @@
          * @returns {*}
          * @private
          */
-        let _addMeta = (data) => {
-            let clone = _.cloneDeep(data);
+        let _addMeta = () => {
+            let clone = _.cloneDeep(_tables);
 
 
             if (!_.has(clone, '$$flatly')) {
@@ -126,8 +127,6 @@
 
                     });
                 });
-            } else {
-                _.assign(clone, meta);
             }
 
 
@@ -223,7 +222,7 @@
          * @param {Object} criteria.where An object containing the column and value criterion
          * @params {String} criteria.where.column The name of the column to search
          * @params {number|String} criteria.where.equals The value to search the column for
-         * @returns {?Array} An array containing the search result
+         * @returns {?Object} A row object
          */
         this.findOne = (criteria) => {
             let tblName = criteria.from;
@@ -275,10 +274,13 @@
             _baseDir = path.resolve(global.parent, options.src);
             _files = io.getAll({src: _baseDir});
 
-            /* Add table and row metadata */
+
             let tablesClean = io.parse(options.name, _files);
 
-            _tables = _addMeta(tablesClean);
+            _tables = tablesClean;
+            /* Add table and row metadata */
+            _addMeta();
+
 
             return this;
         };
@@ -295,8 +297,9 @@
 
             var tbl = io.getOne(filePath);
 
-            var meta = _addMeta(tbl);
-            _tables[tblName] = meta;
+
+            _tables[tblName] = tbl;
+            _addMeta();
             return _tables[tblName];
 
         };
@@ -362,7 +365,7 @@
             } else {
                 return true;
             }
-        }
+        };
 
         /**
          * Insert a row into a table
@@ -382,6 +385,7 @@
 
 
                 _tables[tblName].push(row);
+                addMeta();
 
                 return row;
             } else {
