@@ -1,6 +1,6 @@
 <a name="flatly"></a>
 ## flatly
-flatly is a simple flat file JSON db system.IMPORTANT: flatly is under active development and is not considered production ready
+flatly is a simple flat file JSON db system.IMPORTANT: flatly is under active development and is not considered production ready
 
 **Kind**: global class  
 
