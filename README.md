@@ -10,7 +10,7 @@ flatly is a simple flat file JSON db system.IMPORTANT: flatly is under active d
     * [.getSchema()](#flatly+getSchema) ⇒ <code>Array.&lt;string&gt;</code>
     * [.tables()](#flatly+tables) ⇒ <code>Array</code>
     * [.getTable(tblName)](#flatly+getTable) ⇒ <code>Object</code>
-    * [.findOne(criteria)](#flatly+findOne) ⇒ <code>Array</code>
+    * [.findOne(criteria)](#flatly+findOne) ⇒ <code>Object</code>
     * [.findAll(criteria)](#flatly+findAll) ⇒ <code>\*</code>
     * [.use(options)](#flatly+use) ⇒ <code>[flatly](#flatly)</code>
     * [.refreshTable(tblName)](#flatly+refreshTable) ⇒ <code>object</code>
@@ -55,11 +55,11 @@ Returns an object representing the table requested. Use [findOne](#flatly+findOn
 | tblName | <code>String</code> | The name of the table to be returned |
 
 <a name="flatly+findOne"></a>
-### flatly.findOne(criteria) ⇒ <code>Array</code>
+### flatly.findOne(criteria) ⇒ <code>Object</code>
 Returns a row from the specified table
 
 **Kind**: instance method of <code>[flatly](#flatly)</code>  
-**Returns**: <code>Array</code> - An array containing the search result  
+**Returns**: <code>Object</code> - A row object  
 **Params**: <code>String</code> criteria.where.column The name of the column to search  
 **Params**: <code>number\|String</code> criteria.where.equals The value to search the column for  
 
