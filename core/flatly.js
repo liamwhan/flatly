@@ -65,7 +65,7 @@
         /**
          * Returns the a new Id for a table
          * @func flatly~nextId
-         * @param tblName {Object} The table to query
+         * @param table {Object} The table to query
          * @private
          * @returns {number}
          */
@@ -104,9 +104,7 @@
 
         /**
          * Adds flatly metadata to db object
-         * @param data {Object|Array} the data to tag
-         * @param [tblName] {String} a string identifier for what
-         * @returns {*}
+         * @returns {flatly}
          * @private
          */
         let _addMeta = () => {
@@ -130,7 +128,7 @@
             }
 
 
-            return clone;
+            return this;
         };
 
 
@@ -385,7 +383,7 @@
 
 
                 _tables[tblName].push(row);
-                addMeta();
+                _addMeta();
 
                 return row;
             } else {
