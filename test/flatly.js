@@ -187,6 +187,19 @@ describe('Flatly - Users', function () {
 
         });
 
+    });
+
+    describe('Flatly - Refresh', function() {
+        let flatly = {};
+        beforeEach(function () {
+            flatly = new Flatly();
+            flatly.use({name: 'data', src: '../../users/'});
+
+        });
+
+        it('should return a JSON object', function() {
+
+        });
     })
 
 });

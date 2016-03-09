@@ -58,6 +58,10 @@
 
         };
 
+        this.getOne = function(filePath) {
+            return parse(fs.readFileSync(filePath));
+        };
+
         /**
          * @desc Parse JSON files into JS objects
          * @param dbName {String}
@@ -105,7 +109,7 @@
             }
 
             if(!_.isUndefined(callback)) {
-                fs.writeFile(destination, stringified, callback);
+                fs.writeFile(destination, stringified,{}, callback);
             } else {
                 fs.writeFileSync(destination, stringified);
             }
