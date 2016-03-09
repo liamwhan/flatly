@@ -72,7 +72,7 @@
         flatly
         </h2>
         
-            <div class="class-description"><p>flatly is a simple flat file JSON db system.</p></div>
+            <div class="class-description"><p>flatly is a simple flat file JSON db system.<br>IMPORTANT: flatly is under active development and is not considered production ready</p></div>
         
     
 </header>
@@ -139,7 +139,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="flatly.js.html">flatly.js</a>,
-				 <a href="flatly.js.html#sunlight-1-line-18">line 18</a>
+				 <a href="flatly.js.html#sunlight-1-line-16">line 16</a>
 			</li>
 		</ul>
 	</dd>
@@ -210,6 +210,222 @@
             
 <hr>
 <dt>
+    <h4 class="name" id="checkExists"><span class="type-signature"></span>checkExists(tblName, column, value)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Check if a record (row) exists within a given table</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>tblName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name of the table to check</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>column</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The column to search</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The value to search for</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="flatly.js.html">flatly.js</a>,
+				 <a href="flatly.js.html#sunlight-1-line-348">line 348</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>Returns {true} if the value is found {false} otherwise</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">if(flatly.checkExists(&#x27;table1&#x27;, &#x27;id&#x27;, 1)) { //do something }</pre>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
     <h4 class="name" id="dbInfo"><span class="type-signature"></span>dbInfo()</h4>
     
     
@@ -265,7 +481,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="flatly.js.html">flatly.js</a>,
-				 <a href="flatly.js.html#sunlight-1-line-124">line 124</a>
+				 <a href="flatly.js.html#sunlight-1-line-170">line 170</a>
 			</li>
 		</ul>
 	</dd>
@@ -501,7 +717,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="flatly.js.html">flatly.js</a>,
-				 <a href="flatly.js.html#sunlight-1-line-194">line 194</a>
+				 <a href="flatly.js.html#sunlight-1-line-239">line 239</a>
 			</li>
 		</ul>
 	</dd>
@@ -733,7 +949,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="flatly.js.html">flatly.js</a>,
-				 <a href="flatly.js.html#sunlight-1-line-172">line 172</a>
+				 <a href="flatly.js.html#sunlight-1-line-217">line 217</a>
 			</li>
 		</ul>
 	</dd>
@@ -845,7 +1061,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="flatly.js.html">flatly.js</a>,
-				 <a href="flatly.js.html#sunlight-1-line-140">line 140</a>
+				 <a href="flatly.js.html#sunlight-1-line-185">line 185</a>
 			</li>
 		</ul>
 	</dd>
@@ -1009,7 +1225,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="flatly.js.html">flatly.js</a>,
-				 <a href="flatly.js.html#sunlight-1-line-160">line 160</a>
+				 <a href="flatly.js.html#sunlight-1-line-205">line 205</a>
 			</li>
 		</ul>
 	</dd>
@@ -1050,6 +1266,350 @@
     <dd>
         
 <span class="param-type">Object</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="insert"><span class="type-signature"></span>insert(row, tblName)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Insert a row into a table</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>row</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Row object to insert</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>tblName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Name of the table to insert into</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="flatly.js.html">flatly.js</a>,
+				 <a href="flatly.js.html#sunlight-1-line-367">line 367</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="flatly.html">flatly</a></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="refreshTable"><span class="type-signature"></span>refreshTable(tblName)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Refresh table from disk</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>tblName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Table name to refresh</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="flatly.js.html">flatly.js</a>,
+				 <a href="flatly.js.html#sunlight-1-line-286">line 286</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>Table</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">object</span>
 
 
 
@@ -1355,7 +1915,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="flatly.js.html">flatly.js</a>,
-				 <a href="flatly.js.html#sunlight-1-line-277">line 277</a>
+				 <a href="flatly.js.html#sunlight-1-line-305">line 305</a>
 			</li>
 		</ul>
 	</dd>
@@ -1463,7 +2023,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="flatly.js.html">flatly.js</a>,
-				 <a href="flatly.js.html#sunlight-1-line-151">line 151</a>
+				 <a href="flatly.js.html#sunlight-1-line-196">line 196</a>
 			</li>
 		</ul>
 	</dd>
@@ -1669,7 +2229,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="flatly.js.html">flatly.js</a>,
-				 <a href="flatly.js.html#sunlight-1-line-368">line 368</a>
+				 <a href="flatly.js.html#sunlight-1-line-395">line 395</a>
 			</li>
 		</ul>
 	</dd>
@@ -1907,7 +2467,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="flatly.js.html">flatly.js</a>,
-				 <a href="flatly.js.html#sunlight-1-line-219">line 219</a>
+				 <a href="flatly.js.html#sunlight-1-line-264">line 264</a>
 			</li>
 		</ul>
 	</dd>
@@ -2008,7 +2568,7 @@
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
 	
-		on Wed Feb 24th 2016
+		on Wed Mar 9th 2016
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

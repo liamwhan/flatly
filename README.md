@@ -13,8 +13,10 @@ flatly is a simple flat file JSON db system.IMPORTANT: flatly is under active d
     * [.findOne(criteria)](#flatly+findOne) ⇒ <code>Array</code>
     * [.findAll(criteria)](#flatly+findAll) ⇒ <code>\*</code>
     * [.use(options)](#flatly+use) ⇒ <code>[flatly](#flatly)</code>
+    * [.refreshTable(tblName)](#flatly+refreshTable) ⇒ <code>object</code>
     * [.save(options, [callback])](#flatly+save) ⇒ <code>[flatly](#flatly)</code>
     * [.checkExists(tblName, column, value)](#flatly+checkExists) ⇒ <code>boolean</code>
+    * [.insert(row, tblName)](#flatly+insert) ⇒ <code>[flatly](#flatly)</code>
     * [.update(rowData, matchBy, tblName)](#flatly+update) ⇒ <code>[flatly](#flatly)</code>
 
 <a name="new_flatly_new"></a>
@@ -93,6 +95,17 @@ Loads a database from the specified filepath
 | options.name | <code>String</code> | Specify a name for the database |
 | options.src | <code>String</code> | A path to the required data |
 
+<a name="flatly+refreshTable"></a>
+### flatly.refreshTable(tblName) ⇒ <code>object</code>
+Refresh table from disk
+
+**Kind**: instance method of <code>[flatly](#flatly)</code>  
+**Returns**: <code>object</code> - Table  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| tblName | <code>string</code> | Table name to refresh |
+
 <a name="flatly+save"></a>
 ### flatly.save(options, [callback]) ⇒ <code>[flatly](#flatly)</code>
 Save table data to disk. Remove flatly metadata before saving.
@@ -124,6 +137,17 @@ Check if a record (row) exists within a given table
 ```js
 if(flatly.checkExists('table1', 'id', 1)) { //do something }
 ```
+<a name="flatly+insert"></a>
+### flatly.insert(row, tblName) ⇒ <code>[flatly](#flatly)</code>
+Insert a row into a table
+
+**Kind**: instance method of <code>[flatly](#flatly)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| row | <code>object</code> | Row object to insert |
+| tblName | <code>string</code> | Name of the table to insert into |
+
 <a name="flatly+update"></a>
 ### flatly.update(rowData, matchBy, tblName) ⇒ <code>[flatly](#flatly)</code>
 Update an existing table row

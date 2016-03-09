@@ -83,12 +83,11 @@
     const _ = require('lodash');
 
 
-
-
     /**
      * flatly class contains the entire flatly api
      * @func flatly
      * @classdesc flatly is a simple flat file JSON db system.
+     * IMPORTANT: flatly is under active development and is not considered production ready
      * @class
      * @constructor
      * @returns {flatly}
@@ -119,8 +118,9 @@
             _baseDir = "";
 
         /**
-         * Get the flatly metadata
-         * @param obj
+         * Get the flatly metadata from an object
+         * @func flatly~getMeta
+         * @param obj The object to check
          * @returns {Object|boolean}
          * @private
          */
@@ -132,7 +132,21 @@
             }
         };
 
+        /**
+         * Returns the a new Id for a table
+         * @func flatly~nextId
+         * @param tblName {Object} The table to query
+         * @private
+         * @returns {number}
+         */
+        let _nextId = (table) => {
 
+            let maxId = _.max(_.map(table, 'id'));
+
+
+            return maxId + 1;
+
+        };
 
         /**
          * Removes flatly metadata before saving to disk
@@ -157,7 +171,38 @@
         };
 
 
+        /**
+         * Adds flatly metadata to db object
+         * @param data {Object|Array} the data to tag
+         * @param [tblName] {String} a string identifier for what
+         * @returns {*}
+         * @private
+         */
+        let _addMeta = (data) => {
+            let clone = _.cloneDeep(data);
 
+
+            if (!_.has(clone, '$$flatly')) {
+                _.forIn(clone, (tbl, tblName) => {
+                    let meta = {
+                        $$flatly: {
+                            table: tblName
+                        }
+                    };
+
+                    _.forIn(tbl, (row) => {
+
+                        _.assign(row, meta);
+
+                    });
+                });
+            } else {
+                _.assign(clone, meta);
+            }
+
+
+            return clone;
+        };
 
 
         /**
@@ -182,7 +227,8 @@
 
             return search;
         }
-//endregion
+
+        //endregion
 
         // region Public
         /**
@@ -204,7 +250,6 @@
                 count: this.getSchema().length
             }
         };
-
 
 
         /**
@@ -305,44 +350,27 @@
 
             _tables = _addMeta(tablesClean);
 
-
-
             return this;
         };
 
         /**
-         * Adds flatly metadata to db object
-         * @param data {Object|Array} the data to tag
-         * @param [tblName] {String} a string identifier for what
-         * @returns {*}
-         * @private
+         * Refresh table from disk
+         * @func flatly#refreshTable
+         * @param tblName {string} Table name to refresh
+         * @returns {object} Table
          */
-        let _addMeta = (data, tblName) => {
-            let clone = _.cloneDeep(data);
-            let meta = {
-                $$flatly: {
-                    table: tblName
-                }
-            };
+        this.refreshTable = function (tblName) {
+            var filename = tblName.toLowerCase() + ".json";
+            var filePath = path.join(_baseDir, filename);
 
-            if(!_.has(clone, '$$flatly')) {
-                _.forIn(clone, (tbl, tblName) => {
-                    _.forIn(tbl, (row) => {
+            var tbl = io.getOne(filePath);
 
-                        _.assign(row, meta);
+            var meta = _addMeta(tbl);
+            _tables[tblName] = meta;
+            return _tables[tblName];
 
-                    });
-
-                    _.assign(tbl, meta);
-
-                });
-            } else {
-                _.assign(clone, meta);
-            }
-
-
-            return clone;
         };
+        
 
         /**
          * Save table data to disk. Remove flatly metadata before saving.
@@ -372,14 +400,15 @@
             }));
 
             if (_.has(options, 'async') &amp;&amp; options.async) {
-                    if (_.isUndefined(callback)) {
-                        throw Error("save() is set to async and no callback was supplied.");
-                    } else {
-                        io.put(target, tblFile, callback, options.overwrite);
-                        return this;
-                    }
+                if (_.isUndefined(callback)) {
+                    throw Error("save() is set to async and no callback was supplied.");
+                } else {
+                    io.put(target, tblFile, callback, options.overwrite);
+                    return this;
+                }
             } else {
                 io.put(target, tblFile, options.overwrite);
+                this.refreshTable(options.table);
                 return this;
             }
 
@@ -387,38 +416,36 @@
 
 
         /**
-         * Returns the a new Id for a table
-         * @func flatly~nextId
-         * @param tblName {Object} The table to query
-         * @private
-         * @returns {number}
+         * Check if a record (row) exists within a given table
+         * @param {string} tblName The name of the table to check
+         * @param {string} column The column to search
+         * @param {*} value The value to search for
+         * @func flatly#checkExists
+         * @example if(flatly.checkExists('table1', 'id', 1)) { //do something }
+         * @return {boolean} Returns {true} if the value is found {false} otherwise
          */
-        let _nextId = (table) => {
-
-            let maxId = _.max(_.map(table, 'id'));
-
-
-            return maxId + 1;
-
-        };
-
-
         this.checkExists = (tblName, column, value) => {
 
             var bool = this.findOne({from: tblName, where: {column: column, equals: value}});
-            if(_.isNull(bool)) {
+            if (_.isNull(bool)) {
                 return false;
             } else {
                 return true;
             }
         }
 
+        /**
+         * Insert a row into a table
+         * @func flatly#insert
+         * @param row {object} Row object to insert
+         * @param tblName {string} Name of the table to insert into
+         * @returns {flatly}
+         */
         this.insert = (row, tblName) => {
             let table = this.getTable(tblName);
 
 
-
-            if(!_.isNull(table)) {
+            if (!_.isNull(table)) {
                 let newId = table.length === 0 ? 1 : _nextId(table);
 
                 row.id = newId;
@@ -456,7 +483,7 @@
                 }
             }
 
-            if(!_.has(rowData, matchBy)) {
+            if (!_.has(rowData, matchBy)) {
                 throw new Error("The key: " + matchBy + " does not exist.");
             }
 
@@ -466,14 +493,13 @@
             };
 
 
-
             var old = this.findOne({from: tblName, where: where});
 
-            if(old) {
+            if (old) {
 
                 let index = _.findIndex(_tables[tblName], old);
 
-                if(index !== -1) {
+                if (index !== -1) {
 
                     _tables[tblName].splice(index, 1, rowData);
 
@@ -492,7 +518,6 @@
         };
 
         //endregion
-
 
 
     }//end flatly()
@@ -543,7 +568,7 @@
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
 	
-		on Wed Feb 24th 2016
+		on Wed Mar 9th 2016
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
