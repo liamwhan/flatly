@@ -1,3 +1,17 @@
+'use strict';
+
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+var _names = require('./fixtures/names.json');
+
+var names = _interopRequireWildcard(_names);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 /*
 #  ======== A Handy Little Nodeunit Reference ========
 #  https://github.com/caolan/nodeunit
@@ -18,8 +32,5 @@
 #    test.ifError(value)
 */
 
-import _ from 'lodash'
-import * as names from './fixtures/names.json'
-
-
 console.log(names);
+console.log(_lodash2.default);
