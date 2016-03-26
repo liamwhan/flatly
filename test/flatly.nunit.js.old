@@ -1,17 +1,3 @@
-'use strict';
-
-var _lodash = require('lodash');
-
-var _lodash2 = _interopRequireDefault(_lodash);
-
-var _names = require('./fixtures/names.json');
-
-var names = _interopRequireWildcard(_names);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 /*
 #  ======== A Handy Little Nodeunit Reference ========
 #  https://github.com/caolan/nodeunit
@@ -31,6 +17,26 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 #    test.doesNotThrow(block, [error], [message])
 #    test.ifError(value)
 */
+global.root = require('path').resolve(__dirname);
+global.parent = require('path').dirname(__filename);
 
-console.log(names);
-console.log(_lodash2.default);
+var Flatly = require('../dist/flatly.js').Flatly;
+var flatly = new Flatly({src: './fixtures/', name: 'names'});
+
+var subset = flatly.getTable('subset');
+
+exports.tableNames = {
+    tableNames: function(test) {
+        test.expect(1);
+        test.equal(flatly.tableNames, [
+            'names',
+            'subset'
+        ]);
+        test.done()
+    }
+}
+
+
+// exports.loadDir = function(test) {
+//   test.expect(flatly)
+// };
