@@ -48,8 +48,7 @@ var Flatly = exports.Flatly = function () {
 
 
     /**
-     * @member _baseDir The base directory where the table files are located.
-     * @type {string}
+     * @member {string} _baseDir
      * @private
      */
 
@@ -112,7 +111,7 @@ var Flatly = exports.Flatly = function () {
          */
         value: function _addTable(table, tableName) {
 
-            this._tables[tableName] = Flatly._addMeta(table, tableName);
+            this._tables[tableName] = Flatly._addTableMeta(table, tableName);
 
             return this;
         }
@@ -252,10 +251,12 @@ var Flatly = exports.Flatly = function () {
          * @returns {object} Table
          */
         value: function refreshTable(tableName) {
+
             var filename = tableName.toLowerCase() + ".json";
             var filePath = _path2.default.join(this._baseDir, filename);
 
             this._tables[tableName] = _io2.default.getOne(filePath);
+
             return this.getTable(tableName);
         }
     }, {
@@ -293,13 +294,17 @@ var Flatly = exports.Flatly = function () {
             }));
 
             if (options.async) {
+
                 if (_lodash2.default.isUndefined(callback)) {
+
                     throw Error("save() is set to async and no callback was supplied.");
                 } else {
+
                     _io2.default.put(target, tblFile, callback, options.overwrite);
                     return this;
                 }
             } else {
+
                 _io2.default.put(target, tblFile, options.overwrite);
                 this.refreshTable(options.table);
                 return this;
@@ -337,17 +342,21 @@ var Flatly = exports.Flatly = function () {
 
             var table = this.getTable(tableName);
 
-            if (!_lodash2.default.isNull(table)) {
-
-                row.id = table.length === 0 ? 1 : Flatly._nextId(table);
-
-                this._tables[tableName].push(row);
-
-                return this;
-            } else {
+            if (_lodash2.default.isNull(table)) {
 
                 throw Error('Table not found: ', tableName);
             }
+
+            //We Automatically add an id to each row.
+            if (_lodash2.default.isUndefined(row.id)) {
+                row.id = table.length === 0 ? 1 : Flatly._nextId(table);
+            }
+
+            row = Flatly._addRowMeta(row, tableName);
+
+            this._tables[tableName].push(row);
+
+            return this;
         }
     }, {
         key: 'update',
@@ -479,28 +488,55 @@ var Flatly = exports.Flatly = function () {
             return clone;
         }
     }, {
-        key: '_addMeta',
+        key: '_addTableMeta',
 
 
         /**
-         * Adds flatly metadata to db object
-         * @func Flatly#_addMeta()
+         * Adds flatly metadata to table object
+         * @func Flatly#_addTableMeta()
          * @param table {Array} The table array to tag
          * @param tableName {string} The name of the table
-         * @returns {Array} The tagged table
+         * @returns {Array|object} The tagged table
          * @private
          */
-        value: function _addMeta(table, tableName) {
+        value: function _addTableMeta(table, tableName) {
+
+            if (_lodash2.default.isPlainObject(table)) {
+
+                //Assume it is a row and return a tagged row.
+                return Flatly._addRowMeta(table, tableName);
+            }
+
+            //Iterate throw rows and tag them
+            _lodash2.default.each(table, function (row) {
+                row = Flatly._addRowMeta(row, tableName);
+            });
+
+            return table;
+        }
+    }, {
+        key: '_addRowMeta',
+
+
+        /**
+         * Adds flatly metadata to a row object
+         * @func Flatly#_addRowMeta()
+         * @param row {object} The table array to tag
+         * @param tableName {string} The name of the table
+         * @returns {object} The tagged row
+         * @private
+         */
+        value: function _addRowMeta(row, tableName) {
 
             var meta = {
                 table: tableName
             };
 
-            _lodash2.default.each(table, function (row) {
+            if (_lodash2.default.isUndefined(row.flatly__)) {
                 row.flatly__ = meta;
-            });
+            }
 
-            return table;
+            return row;
         }
     }, {
         key: '_parseCriteria',
