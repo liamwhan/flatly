@@ -11,7 +11,6 @@
     const io = require('./io');
     const path = require('path');
     const _ = require('lodash');
-    const fs = require('fs');
     
     
 
@@ -154,7 +153,7 @@
                 throw new Error('You must include both "where" and "from" criteria to use findOne()');
             }
             let search = {};
-            search[criteria.where.column] = criteria.where.equals;
+            search[criteria.where.column] = (isNotNaN(criteria.where.equals) && _.isString(criteria.where.equals)) ? parseInt(criteria.where.equals) : criteria.where.equals;
 
             return search;
         }
@@ -230,17 +229,15 @@
             let tblName = criteria.from;
             let search = _parseCriteria(criteria);
 
-            fs.writeFileSync('D:\\GitProjects\\cirt-wp\\findone.criteria.log', JSON.stringify(criteria));
-            fs.writeFileSync('D:\\GitProjects\\cirt-wp\\findone.search.log', JSON.stringify(search));
-            fs.writeFileSync('D:\\GitProjects\\cirt-wp\\findone.tables.json', JSON.stringify(_tables));
-            
+
+
+
             let tblTarget = this.getTable(tblName.toLowerCase());
 
-            fs.writeFileSync('D:\\GitProjects\\cirt-wp\\findone.target.json', JSON.stringify(tblTarget));
             
             let result = _.find(tblTarget, search);
 
-            fs.writeFileSync('D:\\GitProjects\\cirt-wp\\findone.result.json', JSON.stringify(result));
+
 
 
             return result || null;
