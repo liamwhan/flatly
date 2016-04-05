@@ -153,7 +153,7 @@
                 throw new Error('You must include both "where" and "from" criteria to use findOne()');
             }
             let search = {};
-            search[criteria.where.column] = (isNotNaN(criteria.where.equals) && _.isString(criteria.where.equals)) ? parseInt(criteria.where.equals) : criteria.where.equals;
+            search[criteria.where.column] = (!isNaN(criteria.where.equals) && _.isString(criteria.where.equals)) ? parseInt(criteria.where.equals) : criteria.where.equals;
 
             return search;
         }
