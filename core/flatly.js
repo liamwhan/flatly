@@ -227,9 +227,13 @@
             let tblName = criteria.from;
             let search = _parseCriteria(criteria);
 
+            console.log(criteria);
+            console.log(search);
+            console.log(_tables);
 
             let tblTarget = this.getTable(tblName.toLowerCase());
 
+            
             let result = _.find(tblTarget, search);
 
 
