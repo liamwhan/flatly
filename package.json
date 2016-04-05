@@ -104,5 +104,5 @@
     "jsdoc": "jsdoc -c jsdoc.conf.json -t ./node_modules/ink-docstrap/template",
     "test": "mocha"
   },
-  "version": "0.1.20"
+  "version": "0.1.19"
 }
