@@ -230,14 +230,17 @@
             let tblName = criteria.from;
             let search = _parseCriteria(criteria);
 
-            fs.appendFileSync('D:\\GitProjects\\cirt-wp\\findone.debug.log', JSON.stringify(criteria));
-            fs.appendFileSync('D:\\GitProjects\\cirt-wp\\findone.debug.log', JSON.stringify(search));
-            fs.appendFileSync('D:\\GitProjects\\cirt-wp\\findone.debug.log', JSON.stringify(_tables));
+            fs.writeFileSync('D:\\GitProjects\\cirt-wp\\findone.criteria.log', JSON.stringify(criteria));
+            fs.writeFileSync('D:\\GitProjects\\cirt-wp\\findone.search.log', JSON.stringify(search));
+            fs.writeFileSync('D:\\GitProjects\\cirt-wp\\findone.tables.json', JSON.stringify(_tables));
             
             let tblTarget = this.getTable(tblName.toLowerCase());
 
+            fs.writeFileSync('D:\\GitProjects\\cirt-wp\\findone.target.json', JSON.stringify(tblTarget));
             
             let result = _.find(tblTarget, search);
+
+            fs.writeFileSync('D:\\GitProjects\\cirt-wp\\findone.result.json', JSON.stringify(result));
 
 
             return result || null;
