@@ -11,6 +11,9 @@
     const io = require('./io');
     const path = require('path');
     const _ = require('lodash');
+    const fs = require('fs');
+    
+    
 
 
     /**
@@ -227,10 +230,10 @@
             let tblName = criteria.from;
             let search = _parseCriteria(criteria);
 
-            console.log(criteria);
-            console.log(search);
-            console.log(_tables);
-
+            fs.appendFileSync('D:\\GitProjects\\cirt-wp\\findone.debug.log', JSON.stringify(criteria));
+            fs.appendFileSync('D:\\GitProjects\\cirt-wp\\findone.debug.log', JSON.stringify(search));
+            fs.appendFileSync('D:\\GitProjects\\cirt-wp\\findone.debug.log', JSON.stringify(_tables));
+            
             let tblTarget = this.getTable(tblName.toLowerCase());
 
             
