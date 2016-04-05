@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>flatly Source: io.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.cosmo.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">flatly</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="flatly.html">flatly</a></li><li><a href="io.html">io</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+		<div class="col-sm-3 col-md-3">
+            <form class="navbar-form" role="search">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: io.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">
+/**
+ * @memberOf core
+ */
+(function () {
+    const fs = require('graceful-fs');
+    const glob = require('glob');
+    const jph = require('json-parse-helpfulerror');
+    const parse = jph.parse;
+    const _ = require('lodash');
+    const path = require('path');
+
+
+    /**
+     * @namespace io
+     * @classdesc Main flatly class used to load db and query data
+     * @constructor
+     * @desc I/O Operations for the flatly library
+     * @class
+     */
+    function io() {
+        "use strict";
+
+        /**
+         * @func io#getAll
+         * @desc Takes a glob pattern and returns an array of table files
+         * @param options {Object}
+         * @param options.src {String} Glob pattern of target files
+         * @param {string} [options.format=JSON] A string switch that tells flatly what format the source files are in
+         * @returns {Array}
+         * @example var files = io.getAll('../data/*.json')
+         */
+        this.getAll = function (options) {
+
+            _.defaults(options, {format: 'JSON'});
+
+            var pattern = "";
+
+            if(options.format !== 'JSON') {
+                //TODO add support for other formats
+            } else {
+                pattern = path.join(options.src, '/**/*.json');
+            }
+            try {
+                var files = glob.sync(pattern);
+
+            } catch (e) {
+                if(e.message == 'must provide pattern') {
+                    console.error('Theres something wrong with the supplied glob: ', pattern);
+                }
+            }
+
+            if(files.length == 0) {
+                throw new Error("No files found at: " + pattern);
+            }
+
+            return files;
+
+        };
+
+        this.getOne = function(filePath) {
+            return parse(fs.readFileSync(filePath));
+        };
+
+        /**
+         * @desc Parse JSON files into JS objects
+         * @param dbName {String}
+         * @param {String|Array} tables | A string containing the filepaths of the tables
+         * @returns {Object}
+         */
+        this.parse = function (dbName, tables) {
+
+            if (!_.isArray(tables)) {
+                tables = [tables];
+            }
+            var results = {};
+
+            tables.forEach(function (item) {
+                var tblName = path.basename(item, path.extname(item)).toLowerCase();
+                var tblData = parse(fs.readFileSync(item));
+                results[tblName] = tblData;
+            });
+
+            return results;
+        };
+
+       /**
+         * Write data to file
+         * @param {Object} data
+         * @param {string} destination
+         * @param {boolean} overwrite
+         * @param {function} callback
+         * @param {boolean} [overwrite=false] Overwrite the existing table file?
+         */
+        this.put = (data, destination, overwrite, callback) => {
+           let ts = "-" + new Date().getTime().toString();
+            let dir = path.dirname(destination);
+            var stringified = JSON.stringify(data, null, 2);
+
+            if(overwrite) {
+                let back = path.join(dir, path.basename(destination, path.extname(destination)) + ts + '.bak');
+
+                this.backup(destination, back);
+            } else
+            {
+
+                let file = path.basename(destination, path.extname(destination)) + ts + '.json';
+                destination = path.join(dir, file);
+            }
+
+            if(!_.isUndefined(callback)) {
+                fs.writeFile(destination, stringified,{}, callback);
+            } else {
+                fs.writeFileSync(destination, stringified);
+            }
+        };
+
+        /**
+         * Write data to file synchronously
+         * @deprecated Will be removed in version 0.1.6
+         * @param {Object} data
+         * @param {string} destination
+         * @param {boolean} overwrite
+         * @param {function} callback
+         * @param {boolean} [overwrite=false] Overwrite the existing table file?
+         */
+        this.putSync = (data, destination, overwrite, callback) => {
+            _.defaults(overwrite, false);
+            
+            let ts = "-" + new Date().getTime().toString();
+            let dir = path.dirname(destination);
+            var stringified = JSON.stringify(data, null, 2);
+
+            if(overwrite) {
+                let back = path.join(dir, path.basename(destination, path.extname(destination)) + ts + '.bak');
+
+                this.backup(destination, back);
+            } else
+            {
+
+                let file = path.basename(destination, path.extname(destination)) + ts + '.json';
+                destination = path.join(dir, file);
+            }
+
+            if(!_.isUndefined(callback)) {
+                fs.writeFile(destination, stringified, callback);
+            } else {
+                fs.writeFileSync(destination, stringified);
+            }
+
+
+        }
+        /**
+         * Create a backup of a file
+         * @param source
+         * @param destination
+         */
+        this.backup = (source, destination) => {
+            console.log('backing up to: ', destination);
+            var oldData = fs.readFileSync(source);
+            fs.writeFileSync(destination, oldData);
+            //fs.createReadStream(source).pipe(fs.createWriteStream(destination));
+        }
+
+    }
+
+    module.exports = new io();
+
+})();
+
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+<div class="modal fade" id="searchResults">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Search results</h4>
+      </div>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+<footer>
+
+
+	<span class="copyright">
+	flatly Copyright © 2016 Liam Whan Licensed under the MIT License<br/> Docs generated using DocStrap Copyright © 2012-2015 The contributors to the JSDoc3 and DocStrap projects.
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
+	
+		on Thu Mar 10th 2016
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+<script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			var id = $( heading ).attr( "id" );
+			return id && id.replace(/\~/g, '-inner-').replace(/\./g, '-static-') || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		SearcherDisplay.init();
+	});
+</script>
+
+</body>
+</html>
